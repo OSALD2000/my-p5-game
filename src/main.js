@@ -2,19 +2,20 @@ import p5 from 'p5';
 import sketch_1 from './sketch_1';
 import sketch_2 from './sketch_2';
 import sketch_3 from './sketch3/sketch_3';
+import sketch_4 from './sketch4/sketch_4';
 
 let p5Instance = null;
 
 function startSketch() {
-  const anzahl = parseInt(document.getElementById('anzahl').value) || 80;
+  //const anzahl = parseInt(document.getElementById('anzahl').value) || 80;
 
-  if (p5Instance) {
-    p5Instance.remove();
-  }
+//  if (p5Instance) {
+  //  p5Instance.remove();
+  //}
 
-  p5Instance = new p5((p) => sketch_3(p, { elementCount: anzahl }));
+  p5Instance = new p5((p) => sketch_4(p, {  }));
 }
 
-document.getElementById('anzahl').addEventListener('change', startSketch);
+//document.getElementById('anzahl').addEventListener('change', startSketch);
 
 startSketch();
