@@ -4,12 +4,12 @@ export default (p, options = {}) => {
   const { Engine, World, Bodies, Body, Composite } = Matter;
 
   class Ball {
-    constructor(x, y, id) {
+    constructor(x, y, id, emoji = null, n=null) {
       this.id = id;
       this.player = this.getRandomPlayer();
       this.color = this.player.css;
-      this.name = this.player.name;
-      
+      this.name = n || this.player.name;
+      this.emoji = emoji;
       this.body = Bodies.circle(
         x, 
         y, 
@@ -76,9 +76,15 @@ export default (p, options = {}) => {
         // Draw name
         p.fill(255);
         p.textAlign(p.CENTER, p.CENTER);
-        p.textSize(10);
+        p.textSize(20);
         p.textStyle(p.BOLD);
-        p.text(this.name, this.body.position.x, this.body.position.y);
+        
+        if (this.emoji){
+          p.textSize(45);
+          p.text(this.emoji, this.body.position.x, this.body.position.y);
+        }else {
+          p.text(this.name, this.body.position.x, this.body.position.y);
+        }
       }
   
   }
@@ -92,7 +98,8 @@ export default (p, options = {}) => {
   let gamePhase = "countdown";
   let countdown = 3;
   let countdownTimer = 0;
-  
+  let soundCollision;
+
   const effects = {
     screenShake: { intensity: 0, frames: 0 },
     slowMo: false
@@ -105,10 +112,24 @@ export default (p, options = {}) => {
       enableSleeping: true
     });
     world = engine.world;
-    
+    soundCollision = new Audio("/sounds/pop.mp3")
     generateStars(200);
     createBoundaries();
-    createBalls(options.elementCount || 40);
+    // createBalls(options.elementCount || 40);
+    //createBallsMoroccoVsAlgerine()
+    // createBallsByNames(["يحيوحة", "Malk", "Abu malk", "Naif"])
+    
+    // createBallsGermanyVsFrance()
+    // createBallsBrazilVsArgentina()
+    // createBallsJapanVsSouthKorea()
+    // createBallsUSA_vs_Canada()
+    // createBallsItalyVsSpain()
+    // createBallsEgyptVsTunisia()
+    // createBallsIndiaVsPakistan()
+    // createBallsRussiaVsUkraine()
+    // createBallsChinaVsTaiwan()
+    createBallsTurkeyVsGreece()
+
     generateObstacles();
     
     Matter.Events.on(engine, 'collisionStart', handleCollisions);
@@ -154,6 +175,132 @@ export default (p, options = {}) => {
       balls.push(ball);
       World.add(world, ball.body);
     }
+  }
+
+  function createBallsByNames(names){
+    for(let n of names){
+      let ball = new Ball(
+        p.random(50, 550),
+        50 * 20,
+        1,
+        null,
+        n
+      );
+      balls.push(ball);
+      World.add(world, ball.body);
+    } 
+
+  }
+  function createBallsGermanyVsFrance() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇩🇪", "Germany");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇫🇷", "France");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsBrazilVsArgentina() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇧🇷", "Brazil");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇦🇷", "Argentina");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsJapanVsSouthKorea() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇯🇵", "Japan");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇰🇷", "South Korea");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsUSA_vs_Canada() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇺🇸", "USA");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇨🇦", "Canada");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsItalyVsSpain() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇮🇹", "Italy");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇪🇸", "Spain");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsEgyptVsTunisia() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇪🇬", "Egypt");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇹🇳", "Tunisia");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsIndiaVsPakistan() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇮🇳", "India");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇵🇰", "Pakistan");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsRussiaVsUkraine() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇷🇺", "Russia");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇺🇦", "Ukraine");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsChinaVsTaiwan() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇨🇳", "China");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇹🇼", "Taiwan");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+  
+  function createBallsTurkeyVsGreece() {
+    let ballOne = new Ball(p.random(50, 550), 50 * 20, 1, "🇹🇷", "Turkey");
+    let ballTwo = new Ball(p.random(50, 550), 50 * 20, 2, "🇬🇷", "Greece");
+  
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
+  }
+
+  
+  function createBallsMoroccoVsAlgerine(){
+    let ballOne = new Ball(
+      p.random(50, 550),
+      50 * 20,
+      1,
+      "🇲🇦",
+      "Morocco"
+    );
+    let ballTwo = new Ball(
+      p.random(50, 550),
+      50 * 20,
+      2,
+      "🇩🇿",
+      "Algerine"
+    );
+
+    balls.push(ballOne, ballTwo);
+    World.add(world, ballOne.body);
+    World.add(world, ballTwo.body);
   }
 
   function generateObstacles() {
@@ -211,6 +358,7 @@ export default (p, options = {}) => {
     for (const pair of event.pairs) {
       if (pair.bodyA.circleRadius && pair.bodyB.circleRadius) {
         effects.screenShake = { intensity: 2, frames: 7 };
+        soundCollision.play();
       }
     }
   }
