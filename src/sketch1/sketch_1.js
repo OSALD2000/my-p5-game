@@ -6,10 +6,11 @@ export default (p, options = {}) => {
   const Bodies = Matter.Bodies;
   const Body = Matter.Body;
 
-  var Ball = function(bodies, color, name) {
+  var Ball = function(bodies, color, name, velocity_vector = { x: p.random(-5, 5), y: p.random(-5, 5) }) {
       this.bodies = bodies;
       this.color = color;
-      this.name = name || "Test";
+      this.name = name;
+      Matter.Body.setVelocity(this.bodies, velocity_vector);
   }
 
   Ball.prototype.winCheck = function(finishY, ballRadius, winner) {
@@ -22,7 +23,7 @@ export default (p, options = {}) => {
   let obstacles = [];
   let balls = [];
   let canvasHeight = 900;
-  let canvasWidth = 400;
+  let canvasWidth = 600;
   let scrollOffset = 0;
   let winner = null;
 
@@ -44,26 +45,31 @@ export default (p, options = {}) => {
     ];
     World.add(world, bounds);
 
-    createBalls(options.elementCount);
+    //createBalls(["محمد \n كرعة", "غابريل", "وليام", "كيرن", "نايف","خالد \n خريطة", "كرستيان  \nشالر", "ليفاندوسكي\n الاحمر", "يورغي"], "محمد \n كرعة");
+    createBalls(["محمد \n كرعة", "وليام", "كرستيان  \nشالر"], "محمد \n كرعة");
+    
     generateObstacles();
     
     balls.forEach(ball => World.add(world, ball.bodies))
   };
 
-  function createBalls(n)
+  function createBalls(names, favored)
   {
-    for (let i = 0; i < n; i++) {
-        let _color = getRandomColor()
+      names.forEach((n, i) =>{
+        const isFavored = n.includes(favored);
         balls.push(new Ball(
-          Bodies.circle(250 + p.random(-100, 100), 50 + i * 5, ballRadius, { restitution: 0.8, friction: 0.02, frictionAir: 0.01 }),
-          _color,
-          getColorName(..._color)
+          Bodies.circle(250 + p.random(-100, 100), 50 + i * 5, ballRadius, { restitution: isFavored ? 0.5 : 0.65, friction: isFavored ? 0.010 : 0.018, frictionAir: isFavored ? 0.00001 : 0.0001 }),
+          getRandomColor(),
+          n,
+          isFavored 
+          ? { x: p.random(-5, 10), y: p.random(5, 10) }
+          : { x: p.random(-5, 5), y: p.random(-5, 5) }
         ));
-      }
-  }
+      })
+    }
 
   function generateObstacles() {
-    for (let i = 0; i < 35; i++) {
+    for (let i = 2; i < 35; i++) {
       const y = i * 230;
       const angle = p.random(0.3, 0.5);
       const gapWidth = 35;
@@ -95,41 +101,6 @@ export default (p, options = {}) => {
     return [r, g, b];
   }
 
-  function getColorName(r, g, b) {
-    const colorMap = [
-      { name: "Rot", r: 255, g: 0, b: 0 },
-      { name: "Grün", r: 0, g: 255, b: 0 },
-      { name: "Blau", r: 0, g: 0, b: 255 },
-      { name: "Gelb", r: 255, g: 255, b: 0 },
-      { name: "Lila", r: 128, g: 0, b: 128 },
-      { name: "Türkis", r: 0, g: 255, b: 255 },
-      { name: "Orange", r: 255, g: 165, b: 0 },
-      { name: "Rosa", r: 255, g: 192, b: 203 },
-      { name: "Braun", r: 165, g: 42, b: 42 },
-      { name: "Grau", r: 128, g: 128, b: 128 },
-      { name: "Schwarz", r: 0, g: 0, b: 0 },
-      { name: "Weiß", r: 255, g: 255, b: 255 }
-    ];
-  
-    let closestColor = null;
-    let minDistance = Infinity;
-  
-    for (const color of colorMap) {
-      const distance = Math.sqrt(
-        Math.pow(r - color.r, 2) +
-        Math.pow(g - color.g, 2) +
-        Math.pow(b - color.b, 2)
-      );
-  
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestColor = color.name;
-      }
-    }
-  
-    return closestColor;
-  }
-  
   p.draw = () => {
     Engine.update(engine);
 
@@ -155,7 +126,7 @@ export default (p, options = {}) => {
       p.pop();
     }
 
-    balls.forEach(ball => drawBall(ball.bodies, ball.color))
+    balls.forEach(ball => drawBall(ball.bodies, ball.color, ball.name))
 
     const finishY = 8000;
     p.stroke(0, 255, 0);
@@ -181,9 +152,19 @@ export default (p, options = {}) => {
     p.pop();
   };
 
-  function drawBall(ball, color) {
+  function drawBall(ball, color, name) {
     p.fill(...color);
     p.noStroke();
     p.ellipse(ball.position.x, ball.position.y, ballRadius * 2);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textStyle(p.BOLD);
+    p.textSize(20);
+    p.stroke(0);
+    p.strokeWeight(3);
+    p.fill(255);
+    p.text(name, ball.position.x, ball.position.y);
+    p.noStroke();
+    p.fill(255);
+    p.text(name, ball.position.x, ball.position.y);
   }
 };
