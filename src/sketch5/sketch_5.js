@@ -14,13 +14,13 @@ export default (p, options = {}) => {
   const Bodies = Matter.Bodies;
   const Body = Matter.Body;
   const Events = Matter.Events;
-  const elementCount = options.elementCount || 12;
+  const elementCount = options.elementCount || 3;
 
   let engine;
   let world;
   let firstTime = true;
-  let canvasHeight = 1000;
-  let canvasWidth = 1000;
+  let canvasHeight = 900;
+  let canvasWidth = 600;
 
   let elements = [];
   let walls = [];

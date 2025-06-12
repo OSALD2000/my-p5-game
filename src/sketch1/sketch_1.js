@@ -33,6 +33,88 @@ const funny_arabic_names = [
 ]
 
 
+const slykhStyleNames = [
+  "سليخ",
+  "سلاليخ",
+  "سلويخ",
+  "سليلوخ",
+  "ساليخ",
+  "سليلوخي",
+  "سولخ",
+  "سللوخ",
+  "سولاليخ",
+  "سولليخ",
+  "سليخوخ",
+  "سلييخ",
+  "سليخي",
+  "سلاخيل",
+  "سلايخ",
+  "سليخول",
+  "سولليخي",
+  "سلالوخ",
+  "سوليخ",
+  "سلخولي"
+];
+
+const maskedFotoCache = {};
+const photos_louaded = {}
+
+
+const alrahma_array = [
+  {
+    name: "البنزيموزليق",
+    foto: "bnz.webp"
+  },
+  {
+    name: "أبو شوقي",
+    foto: "abo_shoky.webp"
+  }
+]
+
+const monkys_array = [
+  {
+    name: "القرد\nأبو كاب أزرق",
+    foto: "monkey_10.jpg"
+  },
+  {
+    name: "القرد\nسنانير",
+    foto: "monkey_9.jpg"
+  },
+  {
+    name: "القرد\nأبو ضحكة جنان",
+    foto: "monkey_8.jpg"
+  },
+  {
+    name: "القرد\nشارب باشا",
+    foto: "monkey_7.jpg"
+  },
+  {
+    name: "القرد\nالفاضي",
+    foto: "monkey_6.jpg"
+  },
+  {
+    name: "القرد\nالمتشيك",
+    foto: "monkey_5.jpg"
+  },
+  {
+    name: "القرد\nأبو فروة منكوشة",
+    foto: "monkey_4.jpg"
+  },
+  {
+    name: "القرد\nمغني الراب",
+    foto: "monkey_3.jpg"
+  },
+  {
+    name: "القرد\nأبو دقن",
+    foto: "monkey_2.jpg"
+  },
+  {
+    name: "القرد\nأبو عيون كبار",
+    foto: "monkey_1.jpg"
+  }
+]
+
+
 function generateFunnyArabicNames(n) {
   const firstParts = [
     "أبو", "شيخ", "معلم", "سلطان", "كابتن", "دكتور", "باشا", "زعيم", "أستاذ", "الحاج",
@@ -59,6 +141,23 @@ function generateFunnyArabicNames(n) {
 }
 
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function generateFunnyArabicNames2(n)
+{
+    let shuffled = shuffleArray(funny_arabic_names);
+
+    let picked = shuffled.slice(0, n);
+
+    return picked;
+}
+
 
 
 
@@ -68,10 +167,12 @@ export default (p, options = {}) => {
   const Bodies = Matter.Bodies;
   const Body = Matter.Body;
 
-  var Ball = function(bodies, color, name, velocity_vector = { x: p.random(-5, 5), y: p.random(-5, 5) }) {
+  var Ball = function(bodies, color, name, velocity_vector = { x: p.random(-5, 5), y: p.random(-5, 5) }, with_foto = false, foto_name) {
       this.bodies = bodies;
       this.color = color;
       this.name = name;
+      this.with_foto = with_foto;
+      this.foto_name = foto_name;
       Matter.Body.setVelocity(this.bodies, velocity_vector);
   }
 
@@ -89,7 +190,7 @@ export default (p, options = {}) => {
   let scrollOffset = 0;
   let winner = null;
 
-  const ballRadius = 15;
+  const ballRadius = 23;
 
   p.setup = () => {
     p.createCanvas(canvasWidth, canvasHeight);
@@ -101,18 +202,32 @@ export default (p, options = {}) => {
     const wallThickness = 50;
     const bounds = [
       Bodies.rectangle(200, -wallThickness / 2, canvasWidth, wallThickness, { isStatic: true }),
-      Bodies.rectangle(200, 10000 + wallThickness / 2, canvasWidth, wallThickness, { isStatic: true }),
-      Bodies.rectangle(-wallThickness / 2, 3000, wallThickness, 10000, { isStatic: true }),
-      Bodies.rectangle(canvasWidth + wallThickness / 2, 3000, wallThickness, 10000, { isStatic: true }),
+      Bodies.rectangle(200, 6000 + wallThickness / 2, canvasWidth, wallThickness, { isStatic: true }),
+      Bodies.rectangle(-wallThickness / 2, 3000, wallThickness, 6000, { isStatic: true }),
+      Bodies.rectangle(canvasWidth + wallThickness / 2, 3000, wallThickness, 6000, { isStatic: true }),
     ];
     World.add(world, bounds);
 
     //createBalls(["محمد \n كرعة", "غابريل", "وليام", "كيرن", "نايف","خالد \n خريطة", "كرستيان  \nشالر", "ليفاندوسكي\n الاحمر", "يورغي"], "محمد \n كرعة");
-    //createBalls(generateFunnyArabicNames(150));
-    createBalls(["علي\n خريطة", "يارا\n خريطة"]);
+    //createBalls(generateFunnyArabicNames(2));
+    //createBalls(["علي\n خريطة", "يارا\n خريطة", "ظافر \nخريطة", "رشا \nخريطة"]);
+    //createBalls(generateFunnyArabicNames2(20))
+    //createBalls(shuffleArray(slykhStyleNames))
+
+    //createBallsWithFoto(shuffleArray(monkys_array).slice(0, 3))
+    // monkys_array.forEach(item => p.loadImage(`/pictures/${item["foto"]}`, (loadedImg) => {
+    //   photos_louaded[item["foto"]] = loadedImg;
+    // }))    
+
+    createBallsWithFoto(shuffleArray(alrahma_array))
+    alrahma_array.forEach(item => p.loadImage(`/pictures/${item["foto"]}`, (loadedImg) => {
+      photos_louaded[item["foto"]] = loadedImg;
+    }))    
+
     generateObstacles();
     
     balls.forEach(ball => World.add(world, ball.bodies))
+
   };
 
   function createBalls(names, favored)
@@ -120,7 +235,7 @@ export default (p, options = {}) => {
       names.forEach((n, i) =>{
         const isFavored = n.includes(favored);
         balls.push(new Ball(
-          Bodies.circle(250 + p.random(-100, 100), 50 + i * 5, ballRadius, { restitution: isFavored ? 0.4 : 0.5, friction: isFavored ? 0.010 : 0.018, frictionAir: isFavored ? 0.00001 : 0.0001 }),
+          Bodies.circle(250 + p.random(-100, 100), 50 + i * 5, ballRadius, { restitution: isFavored ? 0.5 : 0.7, friction: isFavored ? 0.001 : 0.001, frictionAir: isFavored ? 0.00001 : 0.00001 }),
           getRandomColor(),
           n,
           isFavored 
@@ -130,11 +245,31 @@ export default (p, options = {}) => {
       })
     }
 
+    function createBallsWithFoto(names, favored)
+    {
+        names.forEach((n, i) =>{
+          const isFavored = n["name"].includes(favored);
+          balls.push(new Ball(
+            Bodies.circle(250 + p.random(-100, 100), 
+            50 + i * 5,
+             ballRadius,
+              { restitution: isFavored ? 0.5 : 0.65, friction: isFavored ? 0.001 : 0.018, frictionAir: isFavored ? 0.00001 : 0.00001 }),
+            getRandomColor(),
+            n["name"],
+            isFavored 
+            ? { x: p.random(-5, 10), y: p.random(5, 10) }
+            : { x: p.random(-5, 5), y: p.random(-5, 5) },
+            true,
+            n["foto"]
+          ));
+        })
+    }
+
   function generateObstacles() {
-    for (let i = 1; i < 33; i++) {
-      const y = i * 240;
+    for (let i = 1; i < 22; i++) {
+      const y = i * 230;
       const angle = p.random(0.3, 0.4);
-      const gapWidth = 75;
+      const gapWidth = 40;
       const totalWidth = canvasWidth;
       const gapX = p.random(20, 400 - gapWidth);
 
@@ -188,9 +323,9 @@ export default (p, options = {}) => {
       p.pop();
     }
 
-    balls.forEach(ball => drawBall(ball.bodies, ball.color, ball.name))
+    balls.forEach(ball => ball.with_foto ? drawBallWithImage(ball.bodies, ball.foto_name, ball.name) : drawBall(ball.bodies, ball.color, ball.name))
 
-    const finishY = 8000;
+    const finishY = 5100;
     p.stroke(0, 255, 0);
     p.strokeWeight(4);
     p.line(0, finishY, p.width, finishY);
@@ -228,5 +363,37 @@ export default (p, options = {}) => {
     p.noStroke();
     p.fill(255);
     p.text(name, ball.position.x, ball.position.y);
+  }
+
+
+  function drawBallWithImage(ball, imgName, name) {
+    const size = ballRadius * 2;
+  
+    if (!maskedFotoCache[imgName] && photos_louaded[imgName]) {
+      let originalImg = photos_louaded[imgName];
+      originalImg.resize(size, size);
+      
+      let mask = p.createGraphics(size, size);
+      mask.ellipse(size / 2, size / 2, size, size);
+  
+      let imgCopy = originalImg.get();
+      imgCopy.mask(mask);
+      
+      maskedFotoCache[imgName] = imgCopy;
+    }
+  
+    if (maskedFotoCache[imgName]) {
+      p.imageMode(p.CENTER);
+      p.image(maskedFotoCache[imgName], ball.position.x, ball.position.y);
+    }
+  
+    const textOffset = ballRadius + 10;
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textStyle(p.BOLD);
+    p.textSize(15);
+    p.stroke(0);
+    p.strokeWeight(3);
+    p.fill(255);
+    p.text(name, ball.position.x, ball.position.y + textOffset);
   }
 };
